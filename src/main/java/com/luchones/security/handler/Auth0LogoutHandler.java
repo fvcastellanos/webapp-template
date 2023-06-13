@@ -36,17 +36,17 @@ public class Auth0LogoutHandler implements LogoutHandler {
                 .invalidate();
         }
 
-        final String issuer = (String) getClientRegistration()
+        final var issuer = (String) getClientRegistration()
             .getProviderDetails()
             .getConfigurationMetadata()
             .get("issuer");
 
-        final String clientId = getClientRegistration().getClientId();
-        final String returnTo = ServletUriComponentsBuilder.fromCurrentContextPath()
+        final var clientId = getClientRegistration().getClientId();
+        final var returnTo = ServletUriComponentsBuilder.fromCurrentContextPath()
             .build()
             .toString();
 
-        final String logoutUrl = UriComponentsBuilder.fromHttpUrl(issuer + "v2/logout?client_id={clientId}&returnTo={returnTo}")
+        final var logoutUrl = UriComponentsBuilder.fromHttpUrl(issuer + "v2/logout?client_id={clientId}&returnTo={returnTo}")
                 .encode()
                 .buildAndExpand(clientId, returnTo)
                 .toUriString();        

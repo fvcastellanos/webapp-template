@@ -9,6 +9,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.luchones.security.handler.SuccessLoginHandler;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -16,8 +18,8 @@ public class SecurityConfiguration {
 
     @Bean   
     public SecurityFilterChain filterChain(final HttpSecurity http,
-                                           final LogoutHandler logoutHandler) throws Exception {
-
+                                           final LogoutHandler logoutHandler,
+                                           final SuccessLoginHandler successLoginHandler) throws Exception {
 
         http.authorizeHttpRequests((requests) -> requests
             .anyRequest().authenticated()
@@ -25,6 +27,7 @@ public class SecurityConfiguration {
 
         try {
             config.configure(http);
+            config.successHandler(successLoginHandler);
         } catch (Exception exception) {
 
             exception.printStackTrace();

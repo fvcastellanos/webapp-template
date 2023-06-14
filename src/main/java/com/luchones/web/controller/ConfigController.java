@@ -1,4 +1,4 @@
-package com.luchones.controller;
+package com.luchones.web.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;

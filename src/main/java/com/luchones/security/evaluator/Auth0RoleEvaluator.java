@@ -3,8 +3,9 @@ package com.luchones.security.evaluator;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class Auth0RoleEvaluator implements PermissionEvaluator {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Auth0RoleEvaluator.class);
+
     private static final String CLAIM_NAME = "net.cavitos.app.roles";
 
     @Override
@@ -20,7 +23,11 @@ public class Auth0RoleEvaluator implements PermissionEvaluator {
                                  final Object targetDomainObject, 
                                  final Object permission) {
 
+        LOGGER.info("Validate user permissions");
+
         if (Objects.isNull(authentication) || Objects.isNull(targetDomainObject) || !(permission instanceof String)) {
+
+            LOGGER.info("Unable to retrieve permissions, denying access");
             return false;
         }
 
@@ -37,7 +44,11 @@ public class Auth0RoleEvaluator implements PermissionEvaluator {
                                  final String targetType,
                                  final Object permission) {
 
+        LOGGER.info("Validate user permissions");
+
         if (Objects.isNull(authentication) || Objects.isNull(targetType) || !(permission instanceof String)) {
+
+            LOGGER.info("Unable to retrieve permissions, denying access");
             return false;
         }                                    
 
@@ -56,8 +67,10 @@ public class Auth0RoleEvaluator implements PermissionEvaluator {
             return attributes.stream()
                     .map(String::toUpperCase)
                     .anyMatch(item -> item.equals(permission.toUpperCase()));
+
         } catch (ClassCastException castException) {
 
+            LOGGER.error("Unable to retrieve permissions, denying access - ", castException);
             return false;
         }
     }

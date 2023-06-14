@@ -2,6 +2,8 @@ package com.luchones.security.handler;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -15,6 +17,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class Auth0LogoutHandler implements LogoutHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Auth0LogoutHandler.class);
 
     private static final String REGISTRATION_ID = "auth0";
 
@@ -30,7 +34,11 @@ public class Auth0LogoutHandler implements LogoutHandler {
                        final HttpServletResponse response, 
                        final Authentication authentication) {
 
+        LOGGER.info("Performing logout for user: {}", authentication.getPrincipal());
+
         if (request.getSession() != null) {
+
+            LOGGER.info("Invalidate Session");
 
             request.getSession()
                 .invalidate();
@@ -53,11 +61,12 @@ public class Auth0LogoutHandler implements LogoutHandler {
 
         try {
 
+            LOGGER.info("Redirecting to logout URL");
             response.sendRedirect(logoutUrl);
 
         } catch (IOException ioException) {
 
-            ioException.printStackTrace();
+            LOGGER.error("Unable to logout user: {} - ", authentication.getPrincipal(), ioException);
         }
         
     }

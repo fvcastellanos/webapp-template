@@ -1,5 +1,8 @@
 package com.luchones.security.handler;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +27,7 @@ public class Auth0ManagementHandler {
         this.domain = domain;
     }
 
-    public void readUserRoles(final String userId) throws Auth0Exception {
+    public List<String> readUserRoles(final String userId) throws Auth0Exception {
 
         try {
             final var managementAPI = buildManagementAPI(domain);
@@ -36,8 +39,12 @@ public class Auth0ManagementHandler {
                                     .execute()
                                     .getBody();
 
-            LOGGER.info("Assigned Roles: {}", assignedRoles);
 
+            LOGGER.info("Assigned Roles: {}", assignedRoles.getLength());
+
+            return assignedRoles.getItems().stream()
+                .map(role -> role.getName())
+                .toList();
 
         } catch (final Auth0Exception auth0Exception) {
 

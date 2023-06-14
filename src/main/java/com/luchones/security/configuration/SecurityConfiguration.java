@@ -2,6 +2,9 @@ package com.luchones.security.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,22 +25,25 @@ public class SecurityConfiguration {
                                            final SuccessLoginHandler successLoginHandler) throws Exception {
 
         http.authorizeHttpRequests((requests) -> requests
-            .anyRequest().authenticated()
-        ).oauth2Login(config -> {
-
-        try {
-            config.configure(http);
-            config.successHandler(successLoginHandler);
-        } catch (Exception exception) {
-
-            exception.printStackTrace();
-        }
-        }).logout(config -> 
-            config.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                .addLogoutHandler(logoutHandler)
-        );
+            .anyRequest().authenticated())
+            .oauth2Login(config -> {
+                config.successHandler(successLoginHandler);
+            })
+            .logout(config -> 
+                config.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                      .addLogoutHandler(logoutHandler)
+            );
 
         return http.build();
+    }
+
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler(PermissionEvaluator permissionEvaluator) {
+
+        var expressionHandler = new DefaultMethodSecurityExpressionHandler();
+	    expressionHandler.setPermissionEvaluator(permissionEvaluator);
+        
+        return expressionHandler;
     }
 
 }

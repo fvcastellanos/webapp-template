@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ConfigController {
 
     @GetMapping
-    @PreAuthorize("hasAuthority('admin')")    
+    @PreAuthorize("hasPermission(this, 'admin')")    
     public String index() {
 
         return "config/index";

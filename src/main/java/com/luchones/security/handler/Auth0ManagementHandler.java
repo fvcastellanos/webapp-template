@@ -1,6 +1,5 @@
 package com.luchones.security.handler;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
